@@ -742,8 +742,12 @@ function extractContainer(data, xhr, options) {
     obj.contents.find('title').remove()
 
     // Gather all script[src] elements
-    obj.scripts = findAll(obj.contents, 'script[src]').remove()
-    obj.contents = obj.contents.not(obj.scripts)
+    if (!options.forbidCacheScript) {
+      // forbid append scripts into head,
+      // to cache script
+      obj.scripts = findAll(obj.contents, 'script[src]').remove()
+      obj.contents = obj.contents.not(obj.scripts)
+    }
   }
 
   // Trim any whitespace off the title
@@ -880,6 +884,7 @@ function enable() {
     dataType: 'html',
     scrollTo: 0,
     maxCacheLength: 20,
+    forbidCacheScript: true,
     version: findVersion
   }
   $(window).on('popstate.pjax', onPjaxPopstate)
